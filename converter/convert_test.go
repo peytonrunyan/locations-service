@@ -13,7 +13,7 @@ const (
 var (
 	StatesFC, _ = GetFeatureCollection(STATES_GEOJSON)
 	sortedMap   = setupMap()
-	Durham      = MakePoint(-78.9, 35.9)
+	Durham      = MakePoint(35.9, -78.9)
 	CostaMesa   = MakePoint(33.64, -117.92)
 )
 

@@ -105,14 +105,9 @@ func MapLocations(fc *geojson.FeatureCollection) (map[string]*[]Location, error)
 			} else if feature.Properties["STATE_NAME"] != nil {
 				loc.State = feature.Properties["STATE_NAME"].(string)
 			} else {
-				fmt.Printf("CityName: %v", feature.Properties["NAME"])
+				fmt.Printf("CityName: %v was ommitted\n", feature.Properties["NAME"])
 				continue
 			}
-		}
-		if feature.Properties["HOUSEUNITS"] != nil {
-			loc.HouseUnits = feature.Properties["HOUSEUNITS"].(int32)
-		} else {
-			loc.HouseUnits = 10
 		}
 		stateSlice, ok := stateLocations[loc.State]
 		if ok {
@@ -138,17 +133,14 @@ func FindCityCounty(locs *[]Location, p orb.Point) *SearchResult {
 	}
 
 	for _, loc := range *locs {
-		fmt.Printf("City: %v, Units: %v\n", loc.City, loc.HouseUnits)
 		if loc.IsMultiPolygon {
 			multiPoly, _ := loc.Features.Geometry.(orb.MultiPolygon)
 			if planar.MultiPolygonContains(multiPoly, p) {
-				fmt.Println("Hit A")
 				return makeRes(loc)
 			}
 		} else {
 			polygon, _ := loc.Features.Geometry.(orb.Polygon)
 			if planar.PolygonContains(polygon, p) {
-				fmt.Println("Hit B")
 				return makeRes(loc)
 			}
 		}

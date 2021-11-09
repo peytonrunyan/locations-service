@@ -2,4 +2,7 @@ module geodb
 
 go 1.16
 
-require github.com/paulmach/orb v0.3.0 // indirect
+require (
+	github.com/gorilla/mux v1.8.0 // indirect
+	github.com/paulmach/orb v0.3.0 // indirect
+)

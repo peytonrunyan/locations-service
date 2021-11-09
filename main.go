@@ -2,29 +2,19 @@ package main
 
 import (
 	"fmt"
-	conv "geodb/converter"
+	"geodb/server"
+	"log"
 )
 
 const (
-	GEO_FILE1 = "/Users/peytonrunyan/projects/geoapp/data/us_states_500k.geojson"
-	GEO_FILE2 = "/Users/peytonrunyan/projects/geoapp/data/Merged_Counties_Subcounties_Communities.geojson"
+	port string = "8083"
 )
 
 func main() {
-	Durham := conv.MakePoint(35.78, -78.6)
-	CostaMesa := conv.MakePoint(33.64, -117.92)
-
-	CountiesFC, _ := conv.GetFeatureCollection(GEO_FILE2)
-	StatesFC, _ := conv.GetFeatureCollection(GEO_FILE1)
-
-	locationsMap, _ := conv.MapLocations(CountiesFC)
-	locationsMap, _ = conv.SortBySize(locationsMap)
-
-	durhamState, _ := conv.FindState(StatesFC, Durham)
-	cmState, _ := conv.FindState(StatesFC, CostaMesa)
-
-	res1 := conv.FindCityCounty(locationsMap[durhamState], Durham)
-	res2 := conv.FindCityCounty(locationsMap[cmState], CostaMesa)
-	fmt.Println(res1)
-	fmt.Println(res2)
+	fmt.Println("Starting server...")
+	fmt.Println("Processing GeoJSON files. This normally takes a bit.")
+	srv := server.NewHTTPServer(":" + port)
+	fmt.Println("Processing complete.")
+	fmt.Printf("Server listening at port %s\n", port)
+	log.Fatal(srv.ListenAndServe())
 }
