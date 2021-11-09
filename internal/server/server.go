@@ -65,7 +65,7 @@ func (s *httpServer) handleLocationRequest(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	fmt.Printf("req: %v\n", req)
-	loc := converter.MakePoint(req.Lat, req.Lon)
+	loc := converter.MakePoint((req.Lat), (req.Lon))
 	state, err := converter.FindState(s.statesFC, loc)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -86,7 +86,7 @@ func (s *httpServer) handleLocationRequest(w http.ResponseWriter, r *http.Reques
 
 func noPointFound(r *LocationRequest) string {
 	return fmt.Sprintf(
-		"Could not find a location within the United States at Lat: %v, Long: %v",
+		"Could not find a location within the United States at Lat: %v, Lon: %v",
 		r.Lat, r.Lon,
 	)
 }

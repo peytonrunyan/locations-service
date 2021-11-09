@@ -161,10 +161,10 @@ func SortBySize(LocMap map[string]*[]Location) (map[string]*[]Location, error) {
 	return LocMap, nil
 }
 
-// Makes a point from a lat/lon pair. Used to spare the `orb` import for anything
-// using this package
+// Makes a point from a lat/lon pair. Forces at least 2 decimal places,
+// which is necssary for the orb package to be happy.
 func MakePoint(lat, lon float64) orb.Point {
-	return orb.Point{lon, lat}
+	return orb.Point{lon * 1.00, lat * 1.00}
 }
 
 //TODO split states into group of N on startup for goroutines
