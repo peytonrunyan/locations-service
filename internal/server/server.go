@@ -4,15 +4,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"geodb/internal/converter"
+	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	"github.com/paulmach/orb/geojson"
 )
 
-const (
-	GEO_FILE1 = "/Users/peytonrunyan/projects/geoapp/data/us_states_500k.geojson"
-	GEO_FILE2 = "/Users/peytonrunyan/projects/geoapp/data/Merged_Counties_Subcounties_Communities.geojson"
+var (
+	STATES, CITIES_COUNTIES = getGeoJSONLocations()
 )
 
 func NewHTTPServer(addr string) *http.Server {
@@ -35,8 +37,8 @@ type httpServer struct {
 // Creates a new httpServer with initialized an initialized state Feature Collection and
 // and initialized sorted map of states to city Features.
 func newHTTPServer() *httpServer {
-	CountiesFC, _ := converter.GetFeatureCollection(GEO_FILE2)
-	StatesFC, _ := converter.GetFeatureCollection(GEO_FILE1)
+	CountiesFC, _ := converter.GetFeatureCollection(CITIES_COUNTIES)
+	StatesFC, _ := converter.GetFeatureCollection(STATES)
 	locationsMap, _ := converter.MapLocations(CountiesFC)
 	locationsMap, _ = converter.SortBySize(locationsMap)
 
@@ -87,4 +89,18 @@ func noPointFound(r *LocationRequest) string {
 		"Could not find a location within the United States at Lat: %v, Long: %v",
 		r.Lat, r.Lon,
 	)
+}
+
+// Loads the absolute file path for the GeoJSON files. It expects these to be
+// located in a `.env` file in the root directory with the variable names `STATES`
+// and `CITIES_COUNTIES` respectively.
+func getGeoJSONLocations() (states string, citiesCounties string) {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("Could not load GeoJSON files\n%s", err.Error())
+	}
+	states = os.Getenv("STATES")
+	citiesCounties = os.Getenv("CITIES_COUNTIES")
+	return states, citiesCounties
+
 }
