@@ -3,7 +3,7 @@ package server
 import (
 	"encoding/json"
 	"fmt"
-	"geodb/converter"
+	"geodb/internal/converter"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -44,8 +44,8 @@ func newHTTPServer() *httpServer {
 }
 
 type LocationRequest struct {
-	Lat  float64 `json:"lat"`
-	Long float64 `json:"long"`
+	Lat float64 `json:"lat"`
+	Lon float64 `json:"lon"`
 }
 
 type LocationReponse struct {
@@ -63,7 +63,7 @@ func (s *httpServer) handleLocationRequest(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	fmt.Printf("req: %v\n", req)
-	loc := converter.MakePoint(req.Lat, req.Long)
+	loc := converter.MakePoint(req.Lat, req.Lon)
 	state, err := converter.FindState(s.statesFC, loc)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -85,6 +85,6 @@ func (s *httpServer) handleLocationRequest(w http.ResponseWriter, r *http.Reques
 func noPointFound(r *LocationRequest) string {
 	return fmt.Sprintf(
 		"Could not find a location within the United States at Lat: %v, Long: %v",
-		r.Lat, r.Long,
+		r.Lat, r.Lon,
 	)
 }

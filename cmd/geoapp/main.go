@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"geodb/server"
+	"geodb/internal/server"
 	"log"
 )
 
