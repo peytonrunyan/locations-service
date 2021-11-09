@@ -3,7 +3,7 @@ package server
 import (
 	"encoding/json"
 	"fmt"
-	"geodb/internal/converter"
+	"geoservice/internal/converter"
 	"log"
 	"net/http"
 	"os"
@@ -20,7 +20,7 @@ var (
 func NewHTTPServer(addr string) *http.Server {
 	httpServer := newHTTPServer()
 	r := mux.NewRouter()
-	r.HandleFunc("/", httpServer.handleLocationRequest).Methods("Get")
+	r.HandleFunc("/", httpServer.handleLocationRequest).Methods("Post")
 
 	return &http.Server{
 		Addr:    addr,
@@ -91,16 +91,28 @@ func noPointFound(r *LocationRequest) string {
 	)
 }
 
-// Loads the absolute file path for the GeoJSON files. It expects these to be
-// located in a `.env` file in the root directory with the variable names `STATES`
+// Loads the absolute file path for the GeoJSON files. It checks the value of the environemtn
+// variable `GEOAPP_PROD`. If the value is unset or set to "false", then it loads a `.env` fiel.
+// It expects the `.env` file in the root directory with the variable names `STATES`
 // and `CITIES_COUNTIES` respectively.
 func getGeoJSONLocations() (states string, citiesCounties string) {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Could not load GeoJSON files\n%s", err.Error())
+	if prod, isSet := os.LookupEnv("GEOAPP_PROD"); prod == "false" || isSet == false {
+		err := godotenv.Load(".env")
+		if err != nil {
+			log.Fatalf("Could not load GeoJSON files from .env\n%s", err.Error())
+		}
 	}
 	states = os.Getenv("STATES")
 	citiesCounties = os.Getenv("CITIES_COUNTIES")
+	if states == "" || citiesCounties == "" {
+		log.Fatalf("A file path must be provided for both STATES and CITIES_COUNTIES")
+	}
 	return states, citiesCounties
+}
 
+func GetPort() (port string) {
+	if _, isSet := os.LookupEnv("GEOAPP_PORT"); isSet == false {
+		return "8083"
+	}
+	return os.Getenv("GEOAPP_PORT")
 }

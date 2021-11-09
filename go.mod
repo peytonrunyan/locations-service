@@ -1,4 +1,6 @@
-module geodb
+module geoservice
+
+
 
 go 1.16
 
