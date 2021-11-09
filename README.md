@@ -6,4 +6,4 @@ Usage note - it requires our TRP GeoJSON files to work.
 
 Runs on port `8083`.
 
-Expects a `GET` request with the following body `{"lat":float64, "lon":float64}`.
+Expects a `POST` request with the following body `{"lat":float64, "lon":float64}`.
