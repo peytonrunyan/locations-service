@@ -1,4 +1,4 @@
-# GeoApp
+# GeoService
 
 A service to quickly get the city, state, and community ID associated with a lat/lon pair. 
 
